@@ -18,7 +18,7 @@ int main(void)
         int spaces = height - 1;
 
         // run the mario block loop
-        if (height > 0 && height < 9)
+        if (height > 0 || height < 9)
         {
             for (int i = 0; i < height; i++)
             {
