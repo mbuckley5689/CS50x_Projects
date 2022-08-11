@@ -1,6 +1,11 @@
 #include <cs50.h>
 #include <stdio.h>
 
+// The purpose of this code is to complete the "more comfortable" version of the "mario" assignment from the week 1 problem set for
+// the 2022 session of the CS50: Introduction to Computer Science course. The prompt for the assignment can be accessed via the URL below:
+
+// https://cs50.harvard.edu/x/2022/psets/1/mario/more/
+
 int main(void)
 {
     int state = 1;
