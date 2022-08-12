@@ -12,7 +12,7 @@ int main(void)
     while (state == 1)
     {
         // request a height for the mario blocks
-        int height = get_int("Input an integer between 1 and 8 (including thoes numbers): \n");
+        int height = get_int("Input an integer between 1 and 8 (including those numbers): \n");
 
         // initialize a variable to properly space the mario blocks
         int spaces = height - 1;
