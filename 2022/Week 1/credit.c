@@ -8,12 +8,13 @@
 
 // https://cs50.harvard.edu/x/2022/psets/1/credit/
 
-
 int digitcount(long number);
 long indexdigit(long number, int index);
+int luhns(long sixteen_digit_number);
 
 int main(void)
 {
+    printf("\n");
     // define the base of the number system being used.
     int base = 10;
     // define the amount of digits required for a credit card number
@@ -22,8 +23,6 @@ int main(void)
     long ccmin = pow(base, digitreq);
     long ccmax = pow(base, digitreq + 1);
     ccmax = ccmax - 1;
-    printf("%lu\n", ccmin);
-    printf("%lu\n", ccmax);
     // ask the user for their credit card number.
     // repeat the inquiry if they input an invalid number.
     //long ccnumber = get_long("Please enter your credit card number: \n");
@@ -33,50 +32,13 @@ int main(void)
         ccnumber = get_long("Please enter your credit card number: \n");
     }
 
-    // check to see if the credit card number is valid via Luhn's Algorithm.
-    long even_digit;
-    long even_multiply;
-    long even_total;
-    long subtract_number;
-    long iteration = 0;
-    long base_now;
-    long ccnumber_now = ccnumber;
-    //printf("iteration: %lu\n", iteration);
-    //printf("base_now: %lu\n", base_now);
-    //printf("even_digit: %lu\n", even_digit);
-    //printf("even_multiply: %lu\n", even_multiply);
-    //printf("even_total: %lu\n", even_total);
-    //printf("subtract_number: %lu\n", subtract_number);
-
-    for (int even_position = digitreq - 1; even_position > 0; even_position = even_position - 1)
-    {
-        iteration++;
-        printf("iteration: %lu\n", iteration);
-        printf("ccnumber_now: %lu\n", ccnumber_now);
-        base_now = pow(base, even_position);
-        subtract_number = ccnumber_now % base_now;
-        even_digit = (ccnumber_now - subtract_number) / base_now;
-        ccnumber_now = subtract_number;
-        even_multiply = even_digit * 2;
-        if (even_position % 2 == 1)
-        {
-            even_total = even_total + even_multiply;
-        }
-
-        printf("even_position: %i\n", even_position);
-        printf("base_now: %lu\n", base_now);
-        printf("even_digit: %lu\n", even_digit);
-        printf("even_multiply: %lu\n", even_multiply);
-        printf("even_total: %lu\n", even_total);
-        printf("subtract_number: %lu\n", subtract_number);
-    }
-    printf("This is the even total: %lu\n", even_total);
-    int integer = 521;
-    int digitcheck = digitcount(integer);
-    printf("Number of digits: %i\n", digitcheck);
-    long indexcheck = indexdigit(ccnumber, 2);
-    printf("Indexed digit: %lu\n", indexcheck);
+    int verify_twenty = luhns(ccnumber);
+    printf("Verification Number: %i\n", verify_twenty);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// FUNCTIONS DEFINED TO COMPUTE LUHN'S ALGORITHM & VERIFY THE CREDIT CARD VENDOR
+////////////////////////////////////////////////////////////////////////////////
 
 // function to count the number of digits in a positive integer
 int digitcount(long number)
@@ -114,4 +76,55 @@ long indexdigit(long number, int index)
         number = subtract_number;
     }
     return indexed_output;
+}
+
+// check to see if a credit card is verified by Luhn's Algorithm.
+// the credit card is verified if the algorithm outputs the number "20"
+int luhns(long sixteen_digit_number)
+{
+    // establish the maximum index of the credit card number
+    int ccnumber_max_index = digitcount(sixteen_digit_number) - 1;
+    // initializes Luhn's Algorithm's "checker". this number should equal "20" at the end of the algorithm
+    int total = 0;
+    // loop that sweeps through each index of the credit card.
+    // the loop starts at the left-most digit and ends with the right-most
+    for (int i = ccnumber_max_index; i > -1; i--)
+    {
+        // initializes the current credit card number in the sweep
+        int current_index = indexdigit(sixteen_digit_number, i);
+
+        // enters the condition for doing operations on every-other number
+        // in the credit card number, if you started counting from the right-side of the number.
+        // note that the loop actually counts from the left but indexes the correct numbers.
+
+        // this loop will multiply every other number by two. if one of those numbers has greater than one digit,
+        // then add each of its digits together.
+        // add all of these numbers together, not including the two-digit numbers themselves
+        if (i % 2 != 0)
+        {
+            int intermediate_addition = current_index * 2;
+            int intermediate_max_index = digitcount(intermediate_addition) - 1;
+            if (intermediate_max_index > 0)
+            {
+                for (int j = intermediate_max_index; j > -1; j--)
+                {
+                int intermediate_index = indexdigit(intermediate_addition, j);
+                total = total + intermediate_index;
+                }
+            }
+
+            else
+            {
+                total = total + intermediate_addition;
+            }
+
+        }
+        // for all indices excluded in the previous "every-other" indexing and summing,
+        // add each individually to the "checker" sum.
+        else
+        {
+            total = total + current_index;
+        }
+    }
+    return total;
 }
