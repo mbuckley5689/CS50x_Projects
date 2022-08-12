@@ -97,27 +97,17 @@ int luhns(long sixteen_digit_number)
         // in the credit card number, if you started counting from the right-side of the number.
         // note that the loop actually counts from the left but indexes the correct numbers.
 
-        // this loop will multiply every other number by two. if one of those numbers has greater than one digit,
-        // then add each of its digits together.
-        // add all of these numbers together, not including the two-digit numbers themselves
+        // this loop will multiply every other number by two. each digit of each of those products
+        // are to then added to the "checker" total.
         if (i % 2 != 0)
         {
             int intermediate_addition = current_index * 2;
             int intermediate_max_index = digitcount(intermediate_addition) - 1;
-            if (intermediate_max_index > 0)
+            for (int j = intermediate_max_index; j > -1; j--)
             {
-                for (int j = intermediate_max_index; j > -1; j--)
-                {
-                int intermediate_index = indexdigit(intermediate_addition, j);
-                total = total + intermediate_index;
-                }
+            int intermediate_index = indexdigit(intermediate_addition, j);
+            total = total + intermediate_index;
             }
-
-            else
-            {
-                total = total + intermediate_addition;
-            }
-
         }
         // for all indices excluded in the previous "every-other" indexing and summing,
         // add each individually to the "checker" sum.
