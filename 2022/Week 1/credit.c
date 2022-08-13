@@ -1,7 +1,6 @@
 #include <cs50.h>
 #include <stdio.h>
 #include <math.h>
-#include <stdarg.h>
 
 // The purpose of this code is to complete the "credit" assignment from the week 1 problem set for
 // the 2022 session of the CS50: Introduction to Computer Science course. The prompt for the assignment can be accessed via the URL below:
@@ -18,25 +17,8 @@ int check_visa(long sixteen_digit_number);
 int main(void)
 {
     printf("\n");
-    // define the base of the number system being used.
-    int base = 10;
-    // define the amount of digits required for a credit card number
-    int digitreq_amex = 15;
-    int digitreq_mastercard = 16;
-    int digitreq_visa_one = 13;
-    int digitreq_visa_two = 16;
-    // define minimum and maximum credit card numbers
-    long amex_min = pow(base, digitreq_amex);
-    long amex_max = pow(base, digitreq_amex + 1) - 1;
-    long mastercard_min = pow(base, digitreq_mastercard);
-    long mastercard_max = pow(base, digitreq_mastercard + 1) - 1;
-    long visa_one_min = pow(base, digitreq_visa_one);
-    long visa_one_max = pow(base, digitreq_visa_one + 1) - 1;
-    long visa_two_min = pow(base, digitreq_visa_two);
-    long visa_two_max = pow(base, digitreq_visa_two + 1) - 1;
 
     // ask the user for their credit card number.
-    // repeat the inquiry if they input an invalid number.
     long ccnumber = get_long("Please enter your credit card number: \n");
 
     // verify whether the credit card number is valid or not via Luhn's Algorithm
@@ -79,7 +61,6 @@ int main(void)
     {
         printf("INVALID\n");
     }
-
 
 }
 
@@ -144,7 +125,6 @@ int luhns(long sixteen_digit_number)
 
         // enters the condition for doing operations on every-other number
         // in the credit card number, if you started counting from the right-side of the number.
-        // note that the loop actually counts from the left but indexes the correct numbers.
 
         // this loop will multiply every other number by two. each digit of each of those products
         // are to then added to the "checker" total.
