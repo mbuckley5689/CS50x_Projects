@@ -201,10 +201,11 @@ void lock_pairs(void)
         int pair_now_loser = pairs[i].loser;
         int queue_length = 1; // var...
         queue[0] = pairs[i].winner; // sets the 1st element of the queue to be the index of the winner of the indexed pair
+        locked[pair_now][pair_now_loser] = true;
 
         // sweep through the queue, checking for cycles
         ///////// this is the part that is not working properly.
-        for (int m = queue_start; m < queue_length; m++)
+        for (int m = queue_start; m < queue_end + 1; m++)
         {
             pair_now = queue[queue_end];
             // sweep through all candidate matchups with the candidate at the end of the queue
@@ -215,10 +216,10 @@ void lock_pairs(void)
                 //////// the indexing of locked[][] may be incorrect to detect cycles
                 //////// maybe we should actually be checking to see if a pair exists, rather
                 //////// than a locked edge... think about it.
-                if (locked[pair_now][pair_check] == true)
+                if (locked[pair_check][pair_now] == true)
                 {
                     queue_end++;
-                    queue[queue_end] = pair_now;
+                    queue[queue_end] = pair_check;
                 }
             }
 
@@ -231,9 +232,9 @@ void lock_pairs(void)
             queue_length = queue_end - queue_start; // recalculate the length of the active queue
 
             bool cycle_check = false;
-            for (int k = queue_start; k < queue_end; k++)
+            for (int k = queue_start; k < queue_end + 1; k++)
             {
-                for (int n = 0; n < dequeue_end + 1; n++)
+                for (int n = 0; n < dequeue_end; n++)
                 {
                     if (queue[k] == dequeue[n])
                     {
@@ -247,28 +248,19 @@ void lock_pairs(void)
             // adding a locked edge
             if (cycle_check == true)
             {
-                m = candidate_count;
+                m = queue_end + 1;
+                locked[pairs[i].winner][pairs[i].loser] = false;
             }
 
             // if there is not a cycle, and there is still a queue,
             // continue cycling through the queue, looking for a cycle
-            else if (cycle_check == false && queue_length > 0)
+            if (cycle_check == false && queue_length >= 0)
             {
                 m = queue_start - 1;
             }
 
-            // create a locked edge if a cycle was not detected,
-            // and the queue has been depleted
-            else
-            {
-                locked[pairs[i].winner][pairs[i].loser] = true;
-            }
-
         }
-        //if (i == 0)
-        //{
-        //    locked[pairs[i].loser][pairs[i].loser] = true;
-        //}
+
     }
 
     return;
@@ -303,7 +295,7 @@ void print_winner(void)
 
     for (int i = 0; i < source_index; i++)
     {
-        printf("Winner: %s\n", source[i]);
+        printf("%s\n", source[i]);
     }
     return;
 }
