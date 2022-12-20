@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
+// The purpose of this code is to complete the "tideman" assignment from the week 3 problem set for
+// the 2022 session of the CS50: Introduction to Computer Science course. The prompt for the assignment can be accessed via the URL below:
+
+// https://cs50.harvard.edu/x/2022/psets/3/tideman/
+
 // Max number of candidates
 #define MAX 9
 
@@ -97,7 +102,6 @@ int main(int argc, string argv[])
     return 0;
 }
 
-// works
 // Update ranks given a new vote
 bool vote(int rank, string name, int ranks[])
 {
@@ -116,7 +120,6 @@ bool vote(int rank, string name, int ranks[])
     return false;
 }
 
-// works
 // Update preferences given one voter's ranks
 void record_preferences(int ranks[])
 {
@@ -132,7 +135,6 @@ void record_preferences(int ranks[])
     return;
 }
 
-// works
 // Record pairs of candidates where one is preferred over the other
 void add_pairs(void)
 {
@@ -163,7 +165,6 @@ void add_pairs(void)
     return;
 }
 
-// works
 // Sort pairs in decreasing order by strength of victory
 void sort_pairs(void)
 {
@@ -183,28 +184,25 @@ void sort_pairs(void)
     return;
 }
 
-// does not work
 // Lock pairs into the candidate graph in order, without creating cycles
 void lock_pairs(void)
 {
-    // TODO
     // sweep through pairs
     for (int i = 0; i < pair_count; i++)
     {
-        int queue_max = MAX * MAX;
-        int queue[queue_max]; // initialize a queue with length...
+        int queue_max = MAX * MAX; // maximum length of the queue
+        int queue[queue_max]; // initialize a queue with length queue_max
         int dequeue[queue_max]; // initializes an array with all indices "dropped" from the queue
         int dequeue_end = 0; // initiailize the ending index of dequeue array
         int queue_start = 0; // initialize the starting index of the active queue
         int queue_end = 0; // initialize the ending index of the active queue
-        int pair_now = pairs[i].winner;
-        int pair_now_loser = pairs[i].loser;
-        int queue_length = 1; // var...
+        int pair_now = pairs[i].winner; // winner of currently indexed "pair"
+        int pair_now_loser = pairs[i].loser; // loser of currently indexed "pair"
+        int queue_length = 1; // length of the active queue.
         queue[0] = pairs[i].winner; // sets the 1st element of the queue to be the index of the winner of the indexed pair
-        locked[pair_now][pair_now_loser] = true;
+        locked[pair_now][pair_now_loser] = true; // initially set a locked edge for the currently indexed winner
 
         // sweep through the queue, checking for cycles
-        ///////// this is the part that is not working properly.
         for (int m = queue_start; m < queue_end + 1; m++)
         {
             pair_now = queue[queue_end];
@@ -213,9 +211,6 @@ void lock_pairs(void)
             {
                 int pair_check = j;
                 // add all locked pairs to the queue
-                //////// the indexing of locked[][] may be incorrect to detect cycles
-                //////// maybe we should actually be checking to see if a pair exists, rather
-                //////// than a locked edge... think about it.
                 if (locked[pair_check][pair_now] == true)
                 {
                     queue_end++;
@@ -226,19 +221,18 @@ void lock_pairs(void)
             dequeue[dequeue_end] = queue[queue_start]; // add the about-to-be-dropped queue element to the dequeue array
             queue_start++; // "drop" the starting element from the queue
             dequeue_end++; // update the final index of the queue
-
-            // consider removing the "+1". This would require adjusting the
-            // first "else if"-check later in the code to have queue_length > 0
             queue_length = queue_end - queue_start; // recalculate the length of the active queue
+            bool cycle_check = false; // initializes flag for detecting cycles
 
-            bool cycle_check = false;
-            for (int k = queue_start; k < queue_end + 1; k++)
+            // checks to see if any nodes in the queue have already been dequeued.
+            // if they have, then created a locked edge will create a cycle
+            for (int k = queue_start; k < queue_end + 1; k++) // cycles through the queue
             {
-                for (int n = 0; n < dequeue_end; n++)
+                for (int n = 0; n < dequeue_end; n++) // cycles through the dequeue
                 {
                     if (queue[k] == dequeue[n])
                     {
-                        cycle_check = true;
+                        cycle_check = true; // set cycle detection flag to true
                     }
                 }
             }
@@ -259,41 +253,45 @@ void lock_pairs(void)
                 m = queue_start - 1;
             }
 
+            // if neither of the two above "if-statements" are true,
+            // then finalize the locked edge initialized in the beginning
+            // of this function.
         }
-
     }
-
     return;
 }
 
-// appears to work
-// Print the winner of the election
+// Print the winner of the election by finding all "sources"
+// of the election graph. this is done by sweeping through the
+// "locked[][]" array. Any column of this array that has all
+// "false" values, is a source.
 void print_winner(void)
 {
-    string source[pair_count];
-    int source_index = 0;
-    // sweep through winners
+    string source[pair_count]; // initialize an array of possible election "sources"
+    int source_index = 0; // initializes current index of the "source" array
+
+    // sweep through losers
     for (int i = 0; i < candidate_count; i++)
     {
-        bool source_check = true;
-        int source_counter = 0;
-        // sweep through losers
+        bool source_check = true; // initializes flag indicating that the indexed pair is a source
+        int source_counter = 0; // init. counter that counts # of "true" values in an indexed column of locked[][]
+        // sweep through winners
         for (int j = 0; j < candidate_count; j++)
         {
             // record if a candidate is not a source
-            if (locked[i][j] == false)
+            if (locked[j][i] == true)
             {
                 source_counter++;
             }
         }
-        if (source_counter == 1)
+        if (source_counter == 0) // add indexed column-candidate as a source & increase source index if true
         {
             source[source_index] = candidates[i];
             source_index++;
         }
     }
 
-    for (int i = 0; i < source_index; i++)
+    for (int i = 0; i < source_index; i++) // print all winners (entries in the source array)
     {
         printf("%s\n", source[i]);
     }
