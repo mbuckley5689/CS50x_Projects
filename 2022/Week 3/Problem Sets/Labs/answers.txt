@@ -1,0 +1,12 @@
+sort1 uses: bubble sort
+
+How do you know?: Bubble sort should be the slowest sorting algorithm when sorting a reversed list;
+
+sort2 uses: merge sort
+
+How do you know?: Merge sort should not be the slowest when sorting randomized data. Sort 1 is bubble sort. Because sort3
+had the longest run time when sorting a random list, through process of elimination, sort 2 is implied to be merge sort.
+
+sort3 uses: selection sort
+
+How do you know?: Because sort1 is bubble sort and sort2 is merge sort, sort3 must be selection sort.
